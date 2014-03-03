@@ -3284,7 +3284,7 @@ directory_handle_command_get(dir_connection_t *conn, const char *headers,
   }
 
   if (options->HidServDirectoryV2 &&
-      connection_dir_is_encrypted(conn) &&
+      //connection_dir_is_encrypted(conn) &&
        !strcmpstart(url,"/tor/rendezvous2/")) {
     /* Handle v2 rendezvous descriptor fetch request. */
     const char *descp;
