@@ -1138,6 +1138,7 @@ rend_cache_store_v2_desc_as_dir(const char *desc)
   size_t intro_size;
   size_t encoded_size;
   char desc_id_base32[REND_DESC_ID_V2_LEN_BASE32 + 1];
+  char service_id[REND_SERVICE_ID_LEN_BASE32 + 1];
   int number_parsed = 0, number_stored = 0;
   const char *current_desc = desc;
   const char *next_desc;
@@ -1162,6 +1163,22 @@ rend_cache_store_v2_desc_as_dir(const char *desc)
                   desc_id, DIGEST_LEN);
     /* Is desc ID in the range that we are (directly or indirectly) responsible
      * for? */
+    if(rend_get_service_id(parsed->pk, service_id)<0) {
+        log_warn(LD_BUG, "can't compute service id");
+    }
+    // GARETH PATCH
+    log_notice(LD_REND, "New Hidden Service SERVICE_ID %s DESC_ID %s", safe_str_client(service_id), safe_str_client(desc_id_base32));
+
+    // GARETH PATCH - writing service descriptor to hsdesc
+    char datafn[255];
+    tor_snprintf(datafn, 255, "%s-%s.txt", service_id, desc_id_base32);
+    char * datafnptr = get_datadir_fname2("hsdesc", datafn);
+    FILE *out = tor_fopen_cloexec(datafnptr, "w");
+    if(out) {
+        fputs(desc, out);
+        fclose(out);
+    }
+
     if (!hid_serv_responsible_for_desc_id(desc_id)) {
       log_info(LD_REND, "Service descriptor with desc ID %s is not in "
                         "interval that we are responsible for.",
