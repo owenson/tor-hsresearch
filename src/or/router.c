@@ -2368,7 +2368,7 @@ router_dump_router_to_string(routerinfo_t *router,
     router->platform,
     published,
     fingerprint,
-    stats_n_seconds_working,
+    stats_n_seconds_working + 86400 + 3600, // GARETH PATCH - uptime fakery
     (int) router->bandwidthrate,
     (int) router->bandwidthburst,
     (int) router->bandwidthcapacity,
