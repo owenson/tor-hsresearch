@@ -1098,6 +1098,18 @@ options_act_reversible(const or_options_t *old_options, char **msg)
     tor_free(fn);
   }
 
+  //GARETH PATCH - add hsdesc dir
+  char *fn = NULL;
+  tor_asprintf(&fn, "%s"PATH_SEPARATOR"hsdesc",
+               options->DataDirectory);
+  if (check_private_dir(fn, running_tor ? CPD_CREATE : CPD_CHECK,
+                        options->User) < 0) {
+    tor_asprintf(msg,
+              "Couldn't access/create private data directory \"%s\"", fn);
+    tor_free(fn);
+    goto done;
+  }
+  tor_free(fn);
   /* Bail out at this point if we're not going to be a client or server:
    * we don't run Tor itself. */
   if (!running_tor)
